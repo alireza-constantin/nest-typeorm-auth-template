@@ -47,6 +47,27 @@ describe('Security configuration contracts', () => {
     ).toThrow('Every SESSION_SECRETS entry must be at least 32 characters');
   });
 
+  it('builds validated Redis configuration', () => {
+    expect(
+      buildConfiguration({
+        ...validEnvironment(),
+        REDIS_CONNECT_TIMEOUT_MS: '7500',
+      }).redis,
+    ).toEqual({
+      url: 'redis://localhost:6379',
+      connectTimeoutMs: 7_500,
+    });
+  });
+
+  it('refuses an invalid Redis connection timeout', () => {
+    expect(() =>
+      buildConfiguration({
+        ...validEnvironment(),
+        REDIS_CONNECT_TIMEOUT_MS: '0',
+      }),
+    ).toThrow('REDIS_CONNECT_TIMEOUT_MS must be an integer');
+  });
+
   it('uses an HTTPS-only host cookie and the agreed TTLs in production', async () => {
     const moduleRef = await Test.createTestingModule({
       providers: [

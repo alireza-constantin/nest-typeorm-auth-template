@@ -7,6 +7,7 @@ export type {
   ApplicationConfiguration,
   DatabaseConfiguration,
   DatabaseSslMode,
+  RedisConfiguration,
   RuntimeEnvironment,
   SessionConfiguration,
 } from './configuration';

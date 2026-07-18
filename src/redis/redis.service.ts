@@ -6,52 +6,21 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createClient, type RedisClientType } from 'redis';
-
-const DEFAULT_CONNECT_TIMEOUT_MS = 5_000;
-
-function required(config: ConfigService, key: string): string {
-  const value = config.get<string>(key)?.trim();
-
-  if (!value) {
-    throw new Error(`${key} must be configured`);
-  }
-
-  return value;
-}
-
-function positiveInteger(
-  config: ConfigService,
-  key: string,
-  fallback: number,
-): number {
-  const raw = config.get<string | number>(key);
-  const value = raw === undefined ? fallback : Number(raw);
-
-  if (!Number.isSafeInteger(value) || value <= 0) {
-    throw new Error(`${key} must be a positive integer`);
-  }
-
-  return value;
-}
+import type { ApplicationConfiguration } from '../config';
 
 @Injectable()
 export class RedisService implements OnModuleInit, OnApplicationShutdown {
   private readonly logger = new Logger(RedisService.name);
   private readonly client: RedisClientType;
 
-  constructor(config: ConfigService) {
-    const url = required(config, 'REDIS_URL');
-    const connectTimeout = positiveInteger(
-      config,
-      'REDIS_CONNECT_TIMEOUT_MS',
-      DEFAULT_CONNECT_TIMEOUT_MS,
-    );
+  constructor(config: ConfigService<ApplicationConfiguration, true>) {
+    const redis = config.getOrThrow('redis', { infer: true });
 
     this.client = createClient({
-      url,
+      url: redis.url,
       disableOfflineQueue: true,
       socket: {
-        connectTimeout,
+        connectTimeout: redis.connectTimeoutMs,
         keepAlive: true,
         reconnectStrategy: (retries) => Math.min(100 * 2 ** retries, 3_000),
       },
@@ -60,6 +29,18 @@ export class RedisService implements OnModuleInit, OnApplicationShutdown {
     this.client.on('error', (error: Error) => {
       // Deliberately omit the Redis URL because it may contain credentials.
       this.logger.error(`Redis client error: ${error.message}`);
+    });
+    this.client.on('connect', () => {
+      this.logger.log('Redis connection started');
+    });
+    this.client.on('ready', () => {
+      this.logger.log('Redis client is ready');
+    });
+    this.client.on('reconnecting', () => {
+      this.logger.warn('Redis client is reconnecting');
+    });
+    this.client.on('end', () => {
+      this.logger.log('Redis connection ended');
     });
   }
 
@@ -87,7 +68,7 @@ export class RedisService implements OnModuleInit, OnApplicationShutdown {
     try {
       await this.client.connect();
       await this.ping();
-      this.logger.log('Redis connection is ready');
+      this.logger.log('Redis startup check passed');
     } catch (error) {
       if (this.client.isOpen) {
         await this.client.disconnect();
@@ -98,8 +79,12 @@ export class RedisService implements OnModuleInit, OnApplicationShutdown {
     }
   }
 
-  async onApplicationShutdown(): Promise<void> {
+  async onApplicationShutdown(signal?: string): Promise<void> {
+    const reason = signal ? ` after ${signal}` : '';
+    this.logger.log(`Closing Redis${reason}`);
+
     if (!this.client.isOpen) {
+      this.logger.log('Redis connection is already closed');
       return;
     }
 
@@ -109,6 +94,7 @@ export class RedisService implements OnModuleInit, OnApplicationShutdown {
       } else {
         await this.client.disconnect();
       }
+      this.logger.log('Redis shutdown completed');
     } catch (error) {
       if (this.client.isOpen) {
         await this.client.disconnect();

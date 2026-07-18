@@ -20,6 +20,11 @@ export interface SessionConfiguration {
   cookieName: string;
 }
 
+export interface RedisConfiguration {
+  url: string;
+  connectTimeoutMs: number;
+}
+
 export interface ApplicationConfiguration {
   environment: RuntimeEnvironment;
   port: number;
@@ -27,9 +32,7 @@ export interface ApplicationConfiguration {
   publicRegistration: boolean;
   requireEmailVerification: boolean;
   database: DatabaseConfiguration;
-  redis: {
-    url: string;
-  };
+  redis: RedisConfiguration;
   session: SessionConfiguration;
 }
 
@@ -233,6 +236,10 @@ export const buildConfiguration = (
     },
     redis: {
       url: readRedisUrl(source),
+      connectTimeoutMs: readInteger(source, 'REDIS_CONNECT_TIMEOUT_MS', 5_000, {
+        min: 1,
+        max: Number.MAX_SAFE_INTEGER,
+      }),
     },
     session: {
       secrets: readSessionSecrets(source),
