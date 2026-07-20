@@ -23,9 +23,10 @@ npm run db:reset
 npm run start:dev
 ```
 
-There is no seed data yet; public registration creates development users. This
-reset workflow is forbidden for production. Production migrations must be
-restored before launch.
+Public registration creates development users. Development/test startup
+idempotently synchronizes the built-in authorization permission and role
+catalogue. This reset workflow is forbidden for production. Production
+migrations and catalogue seeding must be restored before launch.
 
 Run verification with:
 
@@ -57,6 +58,25 @@ session identifier, so fetch a fresh CSRF token after any of them succeeds.
 In development and test, interactive OpenAPI documentation is available at
 `/docs` and the machine-readable document at `/docs/openapi.json`. Both routes
 are absent in production.
+
+## Staff authorization
+
+Administrative endpoints are under `/api/v1/admin`. Customer access uses
+resource ownership; staff access uses database-authoritative permissions grouped
+into the built-in owner, administrator, catalog manager, order manager, support,
+marketing, and analyst roles. Permission changes increment the affected user's
+authentication version and invalidate every existing session.
+
+Create the first owner only after that person has registered an ordinary account:
+
+```bash
+npm run staff:bootstrap-owner -- owner@example.test
+```
+
+The command accepts exactly one existing email and never accepts or prints a
+password. Administrators may create staff and manage non-owner roles. Only an
+owner can add, remove, suspend, or reactivate another owner. The complete rules
+are in [the authorization contract](docs/authorization-contract.md).
 
 ## Health probes
 

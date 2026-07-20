@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { SessionAuthGuard } from './auth/session-auth.guard';
+import { AdminAuthorizationGuard, AuthorizationModule } from './authorization';
 import { configuration, validateEnvironment } from './config';
 import { buildConfiguration } from './config/configuration';
 import { createDatabaseOptions } from './database/database-options';
@@ -28,6 +29,7 @@ import { UsersModule } from './users/users.module';
       useFactory: () => createDatabaseOptions(buildConfiguration(process.env)),
     }),
     ObservabilityModule,
+    AuthorizationModule,
     SessionModule,
     SecurityModule,
     UsersModule,
@@ -40,6 +42,10 @@ import { UsersModule } from './users/users.module';
     {
       provide: APP_GUARD,
       useExisting: SessionAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useExisting: AdminAuthorizationGuard,
     },
   ],
 })

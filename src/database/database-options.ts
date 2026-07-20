@@ -1,5 +1,13 @@
 import { DataSourceOptions } from 'typeorm';
 import { ApplicationConfiguration } from '../config';
+import {
+  AuthorizationAuditEvent,
+  Permission,
+  Role,
+  RolePermission,
+  StaffProfile,
+  StaffRoleAssignment,
+} from '../authorization/data';
 import { EmailVerificationToken } from '../users/email-verification-token.entity';
 import { PasswordCredential } from '../users/password-credential.entity';
 import { User } from '../users/user.entity';
@@ -14,7 +22,17 @@ export const createDatabaseOptions = (
   password: config.database.password,
   database: config.database.name,
   applicationName: 'better-commerce',
-  entities: [User, PasswordCredential, EmailVerificationToken],
+  entities: [
+    User,
+    PasswordCredential,
+    EmailVerificationToken,
+    StaffProfile,
+    Permission,
+    Role,
+    RolePermission,
+    StaffRoleAssignment,
+    AuthorizationAuditEvent,
+  ],
   // Development databases are disposable for now. Production deliberately
   // keeps synchronization disabled and must regain migrations before launch.
   synchronize: config.environment !== 'production',

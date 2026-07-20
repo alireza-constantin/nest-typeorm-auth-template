@@ -21,7 +21,8 @@
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
     "db:reset": "docker compose down --volumes --remove-orphans && docker compose up -d",
-    "db:logs": "docker compose logs -f postgres"
+    "db:logs": "docker compose logs -f postgres",
+    "staff:bootstrap-owner": "ts-node --files -r tsconfig-paths/register src/authorization/bootstrap/bootstrap-owner.cli.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

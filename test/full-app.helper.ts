@@ -8,6 +8,11 @@ import helmet from 'helmet';
 import { DataSource } from 'typeorm';
 import type { RedisClientType } from 'redis';
 import { AppModule } from '../src/app.module';
+import {
+  HttpLoggingMiddleware,
+  ProblemDetailsFilter,
+  RequestIdMiddleware,
+} from '../src/observability';
 import { configureApiRouting, configureOpenApi } from '../src/openapi';
 import { REDIS_CLIENT } from '../src/redis';
 import { CsrfProtectionMiddleware } from '../src/security';
@@ -51,6 +56,10 @@ export async function createFullApplication(): Promise<NestExpressApplication> {
   });
   const config = app.get(ConfigService);
 
+  const requestId = app.get(RequestIdMiddleware);
+  const httpLogging = app.get(HttpLoggingMiddleware);
+  app.use(requestId.use.bind(requestId));
+  app.use(httpLogging.use.bind(httpLogging));
   app.use(helmet({ contentSecurityPolicy: false }));
   app.use(app.get(SESSION_MIDDLEWARE));
   app.use(app.get(SESSION_ABSOLUTE_EXPIRY_MIDDLEWARE));
@@ -66,6 +75,7 @@ export async function createFullApplication(): Promise<NestExpressApplication> {
       transformOptions: { enableImplicitConversion: false },
     }),
   );
+  app.useGlobalFilters(app.get(ProblemDetailsFilter));
   configureApiRouting(app);
   configureOpenApi(app, config.getOrThrow('environment'));
   await app.init();
