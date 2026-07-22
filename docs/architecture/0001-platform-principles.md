@@ -2,6 +2,7 @@
 
 Status: Accepted  
 Date: 2026-07-22
+Amended: 2026-07-22
 
 ## Context
 
@@ -25,7 +26,8 @@ The platform must remain maintainable by a solo developer today while allowing d
 - **Merchant:** the person or business operating one store.
 - **Store:** one independently deployed instance of the platform for one merchant.
 - **Customer:** a shopper who registers with or purchases from a store.
-- **Theme:** a presentation implementation selected by a store deployment.
+- **Storefront:** a customer-facing presentation application that consumes the platform's public API and client contracts. A storefront may be independently maintained for one merchant.
+- **Theme:** presentation source, styling, and composition owned by a storefront. Reusable theme and component source may be copied into a storefront and then customized locally.
 - **Platform Module:** a logically isolated business capability within the platform, such as Products or Orders, that owns its data writes and invariants and exposes explicit public application contracts.
 
 Growth estimates in this document refer to merchant/store installations, not shoppers.
@@ -60,9 +62,11 @@ The commerce application is not a multi-tenant SaaS system. Business tables do n
 
 Fleet deployment automation is outside this decision. Each store remains independently deployable, and operational automation may be introduced when manual upgrades, backups, or monitoring are no longer reliable. This architecture promises reusable software, not indefinite manual operation of one hundred deployments by one person.
 
-## No merchant forks
+## No merchant forks of platform business logic
 
-Merchant-specific presentation and supported behavior are supplied through validated configuration, themes, assets, and platform-owned extension points.
+Merchant-specific presentation may be implemented in an independently maintained storefront using content-as-code, local components, locally owned themes and assets, and copied presentation source. Supported commerce behavior is supplied through public APIs, versioned client libraries, validated configuration, and platform-owned extension points.
+
+An independently maintained storefront is a consumer of the platform, not a fork of the platform backend. Presentation is intentionally allowed to diverge between merchants. Commerce rules and security-sensitive integration logic remain shared and versioned.
 
 The following are prohibited:
 
@@ -70,6 +74,7 @@ The following are prohibited:
 - long-lived merchant branches;
 - merchant-name, domain, or identifier conditionals in platform business logic;
 - modifying commerce invariants inside a theme;
+- copying and modifying authentication, session, cart synchronization, checkout orchestration, or API-contract implementation when the platform provides those capabilities through versioned libraries;
 - duplicating fixes across store-specific versions of the same module.
 
 If a merchant needs a reusable commerce capability, it should be evaluated as a platform feature. A legal or business requirement that is fundamentally incompatible with the platform may require a separate product rather than a hidden permanent fork.
@@ -113,20 +118,25 @@ Extension points are explicit, compile-time platform contracts. Examples may inc
 
 Store deployments select supported implementations using validated configuration. Dynamic module loading, untrusted runtime plugins, and a plugin marketplace are not part of the platform.
 
-## Themes own presentation
+## Storefronts and themes own presentation
 
-Themes may own:
+Storefronts and their themes may own:
 
 - layout, components, styling, and visual assets;
 - page composition and navigation;
+- static text and developer-maintained content-as-code;
 - responsive and accessible presentation;
 - client-side interaction with documented platform APIs.
 
-The backend remains authoritative for prices, discounts, inventory, tax, checkout eligibility, order state, authorization, and validation. A theme may choose how a capability is presented, but it cannot redefine the business rule.
+The backend remains authoritative for prices, discounts, inventory, tax, checkout eligibility, order state, authorization, and validation. A storefront may choose how a capability is presented, but it cannot redefine the business rule.
+
+The standard delivery model favors bespoke, statically rendered storefronts rather than a general-purpose CMS or database-driven page builder. Merchant copy and marketing pages may be maintained as reviewed source code and deployed independently from the platform backend. Dynamic commerce data continues to come from authoritative platform APIs.
+
+Reusable presentation source may be copied into and modified by a storefront. Once copied, that source belongs to the consuming storefront and is not silently overwritten by platform releases. The transport used to distribute that source is defined by a focused later decision. Security-sensitive and correctness-critical behavior that must receive centralized fixes remains in versioned runtime libraries rather than copied presentation source.
 
 The repository and packaging relationship between platform code and merchant themes is decided in ADR-0002 and ADR-0011.
 
-Themes communicate with the platform only through documented public APIs and client contracts. They do not import backend implementation details.
+Storefronts and themes communicate with the platform only through documented public APIs and client contracts. They do not import backend implementation details.
 
 ## Commerce-first evolution
 
@@ -153,9 +163,9 @@ Commerce correctness takes priority over cleverness:
 
 ## Platform independence from merchants
 
-The platform source code contains no knowledge of individual merchants. At runtime, an installation necessarily knows its own validated store configuration, but platform modules do not depend on another store or on a central merchant registry.
+The platform source code contains no knowledge of individual merchants. The platform repository may contain a reference storefront, reusable presentation source, and non-production examples, but it does not contain production merchant page content or bespoke merchant storefront source.
 
-Merchant-specific configuration, assets, and themes consume platform contracts. The platform does not import merchant business logic.
+Each production storefront and store deployment necessarily knows its own configuration, content, assets, and platform versions. Merchant storefront repositories consume platform contracts and artifacts. The platform does not import merchant source code or depend on a central merchant registry.
 
 ## Explicit non-goals
 
@@ -170,7 +180,9 @@ The current architecture does not include:
 - multi-region deployment;
 - cross-store customer identity;
 - shared cross-store catalog, orders, inventory, or sessions;
-- distributed transactions, two-phase commit, or a distributed transaction coordinator.
+- distributed transactions, two-phase commit, or a distributed transaction coordinator;
+- a general-purpose CMS or database-driven page builder for merchant marketing pages;
+- runtime execution of merchant-authored JavaScript or arbitrary page-builder code.
 
 These may be reconsidered only when concrete business or operational requirements justify their cost.
 
@@ -180,9 +192,9 @@ These may be reconsidered only when concrete business or operational requirement
 
 Rejected because it couples unrelated merchants operationally and introduces tenant resolution, tenant-aware authorization, shared failure modes, and data-isolation risk before the business requires them.
 
-### Merchant-specific forks
+### Merchant-specific platform forks
 
-Rejected because fixes, security updates, and platform evolution would have to be repeated and reconciled across divergent codebases.
+Rejected because backend fixes, security updates, and platform evolution would have to be repeated and reconciled across divergent business-logic codebases. Independently maintained presentation storefronts are accepted consumers, not platform forks.
 
 ### Microservices from the beginning
 
@@ -201,7 +213,7 @@ Rejected because they create an unbounded execution and compatibility surface. E
 ### Positive
 
 - stores have strong data and failure isolation;
-- one platform fix can be released to every store without merging merchant forks;
+- a backend or versioned-client fix can be implemented once and released across stores without merging merchant forks;
 - local development and small installations remain understandable;
 - module boundaries provide a path for team ownership without requiring distributed systems.
 
@@ -209,7 +221,9 @@ Rejected because they create an unbounded execution and compatibility surface. E
 
 - each store requires its own deployment, backup, monitoring, and upgrade process;
 - platform upgrades must preserve or explicitly migrate versioned configuration and data;
-- store-specific requests must fit supported configuration, themes, or reviewed extension contracts;
+- bespoke storefront presentation creates additional repositories, builds, and upgrade work;
+- copied presentation source may intentionally diverge and does not receive automatic upstream fixes;
+- store-specific commerce behavior must still fit supported configuration or reviewed extension contracts;
 - operating many installations will eventually require deployment automation even though a SaaS control plane is not currently justified.
 
 ## Architectural invariants
@@ -220,10 +234,12 @@ An implementation complies with this decision only if:
 2. Two stores can run with completely separate databases, Redis data, secrets, and media.
 3. Platform business code contains no merchant-specific conditional behavior.
 4. Configuration is validated before the application accepts traffic.
-5. Themes cannot bypass backend commerce or authorization rules.
+5. Storefronts and themes cannot bypass backend commerce or authorization rules.
 6. Modules cannot mutate another module's owned data through private repositories.
 7. No multi-tenant abstraction is introduced without a later accepted architecture decision.
-8. Platform business logic remains testable without merchant-specific code, themes, or configuration branches.
+8. Platform business logic remains testable without merchant-specific storefront code, themes, or configuration branches.
+9. Merchant storefronts consume public platform contracts and do not copy backend modules or correctness-critical client integration logic.
+10. Production merchant content and bespoke storefront source can change and deploy without modifying the platform repository.
 
 ## Related ADRs
 
