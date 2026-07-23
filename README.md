@@ -150,7 +150,7 @@ pnpm staff:bootstrap-owner -- owner@example.test
 The command accepts exactly one existing email and never accepts or prints a
 password. Administrators may create staff and manage non-owner roles. Only an
 owner can add, remove, suspend, or reactivate another owner. The complete rules
-are in [the authorization contract](docs/authorization-contract.md).
+are in [the authorization contract](docs/contracts/authorization.md).
 
 ## Health probes
 
@@ -161,4 +161,9 @@ Use liveness only to restart a stuck process. Use readiness to decide whether th
 
 ## Production operations
 
-See [the operations runbook](docs/operations.md) for the development reset workflow, session-secret rotation, Redis incidents, and forced logout. See [the release security checklist](docs/release-security-checklist.md) before enabling production registration.
+See [the local-development runbook](docs/runbooks/local-development.md) for the
+development reset workflow, session-secret rotation, Redis incidents, and
+forced logout. See the
+[release security checklist](docs/runbooks/release-security-checklist.md)
+before enabling production registration. The complete documentation map is in
+[docs/README.md](docs/README.md).

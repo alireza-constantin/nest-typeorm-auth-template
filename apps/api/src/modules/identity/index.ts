@@ -2,6 +2,7 @@ export { IdentityModule } from './identity.module';
 export {
   IDENTITY_ADMINISTRATION,
   type IdentityAdministration,
+  type IdentityLockResult,
   type IdentityReference,
   type IdentitySummary,
 } from './identity-administration.contract';

@@ -8,7 +8,7 @@ import { EmailVerificationService } from './auth/email-verification.service';
 import { PasswordService } from './auth/password.service';
 import { SessionAuthGuard } from './auth/session-auth.guard';
 import { IDENTITY_ADMINISTRATION } from './identity-administration.contract';
-import { IdentityAdministrationService } from './identity-administration.service';
+import { IdentityAdministrationPersistence } from './persistence/identity-administration.persistence';
 import { EmailVerificationToken } from './persistence/email-verification-token.entity';
 import { PasswordCredential } from './persistence/password-credential.entity';
 import { User } from './persistence/user.entity';
@@ -32,10 +32,10 @@ import { SecurityModule } from '../../platform/security';
     PasswordService,
     SessionAuthGuard,
     EmailVerificationService,
-    IdentityAdministrationService,
+    IdentityAdministrationPersistence,
     {
       provide: IDENTITY_ADMINISTRATION,
-      useExisting: IdentityAdministrationService,
+      useExisting: IdentityAdministrationPersistence,
     },
   ],
   exports: [SessionAuthGuard, IDENTITY_ADMINISTRATION],

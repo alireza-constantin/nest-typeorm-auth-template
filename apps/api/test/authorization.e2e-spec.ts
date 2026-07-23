@@ -4,13 +4,16 @@ import request, { type Response, type SuperAgentTest } from 'supertest';
 import type { App } from 'supertest/types';
 import {
   AuthorizationAuditEvent,
+  AuthorizationPersistenceService,
+  PermissionKey,
   Role,
   RoleKey,
   StaffProfile,
   StaffProfileStatus,
   StaffRoleAssignment,
-} from '../src/authorization/data';
-import { OwnerBootstrapService } from '../src/authorization/bootstrap';
+} from '../src/modules/authorization/data';
+import { OwnerBootstrapService } from '../src/modules/authorization/bootstrap';
+import { StaffLifecycleService } from '../src/modules/authorization/staff';
 import { User } from '../src/modules/identity/persistence/user.entity';
 import {
   clearFullStackTestData,
@@ -281,6 +284,108 @@ describe('Authorization full-stack security contracts', () => {
       await dataSource.getRepository(AuthorizationAuditEvent).countBy({
         targetId: user.id,
         action: 'owner.bootstrapped',
+      }),
+    ).toBe(1);
+  });
+
+  it('rolls back staff, authVersion, and audit writes when the transaction fails', async () => {
+    const targetAgent = request.agent(server);
+    const actorAgent = request.agent(server);
+    await register(targetAgent, 'rollback-target@example.test');
+    await register(actorAgent, 'rollback-actor@example.test');
+    const users = dataSource.getRepository(User);
+    const targetBefore = await users.findOneByOrFail({
+      emailNormalized: 'rollback-target@example.test',
+    });
+    const actor = await users.findOneByOrFail({
+      emailNormalized: 'rollback-actor@example.test',
+    });
+    const staff = app.get(StaffLifecycleService);
+    const persistence = app.get(AuthorizationPersistenceService);
+    const auditFailure = jest
+      .spyOn(persistence, 'writeAudit')
+      .mockRejectedValueOnce(new Error('forced audit failure'));
+
+    try {
+      await expect(
+        staff.create(
+          {
+            actor: {
+              userId: actor.id,
+              permissions: Object.values(PermissionKey),
+            },
+            requestId: 'rollback-request',
+          },
+          targetBefore.id,
+          [RoleKey.SUPPORT_AGENT],
+        ),
+      ).rejects.toThrow('forced audit failure');
+    } finally {
+      auditFailure.mockRestore();
+    }
+
+    expect(
+      await dataSource
+        .getRepository(StaffProfile)
+        .countBy({ userId: targetBefore.id }),
+    ).toBe(0);
+    expect(
+      await dataSource
+        .getRepository(StaffRoleAssignment)
+        .countBy({ staffUserId: targetBefore.id }),
+    ).toBe(0);
+    expect(
+      await dataSource
+        .getRepository(AuthorizationAuditEvent)
+        .countBy({ targetId: targetBefore.id }),
+    ).toBe(0);
+    expect(
+      (await users.findOneByOrFail({ id: targetBefore.id })).authVersion,
+    ).toBe(targetBefore.authVersion);
+  });
+
+  it('serializes concurrent owner suspensions so one active owner remains', async () => {
+    const firstAgent = request.agent(server);
+    const secondAgent = request.agent(server);
+    await register(firstAgent, 'first-owner@example.test');
+    await register(secondAgent, 'second-owner@example.test');
+    const firstOwnerId = await grantBuiltInRole(
+      'first-owner@example.test',
+      RoleKey.OWNER,
+    );
+    const secondOwnerId = await grantBuiltInRole(
+      'second-owner@example.test',
+      RoleKey.OWNER,
+    );
+    const staff = app.get(StaffLifecycleService);
+    const ownerPermissions = Object.values(PermissionKey);
+
+    const results = await Promise.allSettled([
+      staff.suspend(
+        {
+          actor: { userId: firstOwnerId, permissions: ownerPermissions },
+          requestId: 'concurrent-owner-1',
+        },
+        secondOwnerId,
+      ),
+      staff.suspend(
+        {
+          actor: { userId: secondOwnerId, permissions: ownerPermissions },
+          requestId: 'concurrent-owner-2',
+        },
+        firstOwnerId,
+      ),
+    ]);
+
+    expect(results.filter(({ status }) => status === 'fulfilled')).toHaveLength(
+      1,
+    );
+    expect(results.filter(({ status }) => status === 'rejected')).toHaveLength(
+      1,
+    );
+    expect(
+      await dataSource.getRepository(StaffProfile).countBy({
+        status: StaffProfileStatus.ACTIVE,
       }),
     ).toBe(1);
   });
