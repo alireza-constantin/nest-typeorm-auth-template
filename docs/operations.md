@@ -1,19 +1,58 @@
-# Authentication operations runbook
+# Authentication and local data operations runbook
 
 ## Disposable development database
 
-The current pre-launch workflow intentionally has no migration files. TypeORM
-schema synchronization is enabled only when `NODE_ENV` is `development` or
-`test`. After an entity change, reset all local database and session state:
+Run database lifecycle commands from the platform repository root. The root
+`docker-compose.yml` starts only PostgreSQL and Redis; the API continues to run
+through pnpm on the host.
+
+Start or stop dependencies without deleting their volumes:
 
 ```bash
-npm run db:reset
-npm run start:dev
+pnpm db:up
+pnpm db:down
 ```
 
-`db:reset` deletes both Docker volumes, including every local user and Redis
-session. No seed records are currently required because public registration is
-enabled.
+The current pre-launch workflow intentionally has no migration files. TypeORM
+schema synchronization is enabled only when `NODE_ENV` is `development` or
+`test`. After an entity change, confirm that this is the disposable local
+Compose project, then reset all local database and session state:
+
+```bash
+docker compose config --services
+pnpm db:reset
+pnpm start:dev
+```
+
+The service list must be `postgres` and `redis`. `db:reset` runs Compose with
+`down --volumes --remove-orphans` and then starts both services again. It
+permanently deletes the local PostgreSQL and Redis volumes, including users,
+authorization audit data, and every session.
+
+There is currently no general seed command. Development/test startup
+idempotently synchronizes the built-in authorization permission and role
+catalogue. Public registration creates ordinary development users. If the reset
+removed the initial owner, register that user again and bootstrap the existing
+account:
+
+```bash
+pnpm staff:bootstrap-owner -- owner@example.test
+```
+
+The bootstrap command accepts exactly one existing normalized email, never a
+password, and invalidates that user's existing sessions when it changes their
+authorization.
+
+Stateful end-to-end tests require the local dependencies:
+
+```bash
+pnpm db:up
+pnpm test:e2e -- --runInBand
+```
+
+Those suites create/use the dedicated `better_commerce_test` database and
+isolated Redis prefixes. They truncate only test data; they do not run
+`db:reset`.
 
 This workflow must never be used for production. `synchronize` is disabled in
 production, and production deployment remains blocked until reviewed,

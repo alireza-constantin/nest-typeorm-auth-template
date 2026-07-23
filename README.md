@@ -1,40 +1,114 @@
-# Better Commerce API
+# Better Commerce
 
-NestJS commerce API with local email/password authentication, PostgreSQL-backed identities, and Redis-backed opaque sessions. Social providers and OTP are intentionally outside the current release.
+Better Commerce is a TypeScript platform monorepo for independently deployed
+commerce stores. The implemented application is currently the NestJS API in
+`apps/api`, with PostgreSQL-backed identities and Redis-backed opaque sessions.
+Social providers and OTP are intentionally outside the current release.
 
-## Local development
+## Repository layout
 
-Requirements: Node.js, npm, and Docker Compose.
-
-```bash
-npm install
-docker compose up -d
-npm run start:dev
+```text
+apps/
+  api/                  NestJS modular-monolith API
+docs/                   Architecture, contracts, and runbooks
+docker-compose.yml      Local PostgreSQL and Redis
+package.json            Root orchestration commands
+pnpm-workspace.yaml     Workspace definition
+turbo.json              Build and verification orchestration
 ```
 
-Copy `.env.example` to `.env` before starting. Values in `.env.example` are development-only; production secrets belong in a secret manager.
+Run ordinary development and CI commands from the repository root. Root
+commands orchestrate every applicable workspace package through pnpm and
+Turborepo. To run one API script directly, use
+`pnpm --filter @better-commerce/api <script>`.
 
-The current development database is disposable. TypeORM synchronizes entities
-only in development/test. After an entity change, reset PostgreSQL and Redis and
-start the API so the schema is recreated:
+## Prerequisites
+
+- Node.js 22.17.0 or newer;
+- pnpm 11.9.0, matching the pinned `packageManager`;
+- Docker with Docker Compose v2 for PostgreSQL, Redis, and stateful end-to-end
+  tests.
+
+On Windows, use `pnpm.cmd` if PowerShell's execution policy blocks `pnpm.ps1`.
+Do not weaken the machine execution policy for this repository.
+
+## First-time setup
+
+From the repository root:
 
 ```bash
-npm run db:reset
-npm run start:dev
+pnpm install --frozen-lockfile
 ```
 
-Public registration creates development users. Development/test startup
-idempotently synchronizes the built-in authorization permission and role
-catalogue. This reset workflow is forbidden for production. Production
-migrations and catalogue seeding must be restored before launch.
+Copy `.env.example` to the ignored root `.env` file:
 
-Run verification with:
+```powershell
+Copy-Item .env.example .env
+```
+
+On macOS or Linux, use `cp .env.example .env`. The checked-in values are only
+for local development. Never copy them to production; production credentials
+and independent random secrets belong in the deployment secret manager.
+
+Start the local dependencies, then the API:
 
 ```bash
-npm run build
-npm test -- --runInBand
-npm run test:e2e -- --runInBand
+pnpm db:up
+pnpm start:dev
 ```
+
+The API listens at `http://localhost:3000` with the example configuration.
+Development OpenAPI is available at `http://localhost:3000/docs`, liveness at
+`/health/live`, and dependency readiness at `/health/ready`.
+
+## Root command contract
+
+| Command | Purpose |
+| --- | --- |
+| `pnpm start:dev` | Run the API in watch mode |
+| `pnpm build` | Build every applicable workspace package |
+| `pnpm typecheck` | Type-check every applicable workspace package |
+| `pnpm lint` | Run the non-mutating lint gate |
+| `pnpm test -- --runInBand` | Run unit tests |
+| `pnpm test:e2e -- --runInBand` | Run end-to-end tests; PostgreSQL and Redis must be running |
+| `pnpm db:up` | Start local PostgreSQL and Redis |
+| `pnpm db:down` | Stop local containers without deleting data |
+| `pnpm db:logs` | Follow PostgreSQL logs |
+| `pnpm db:reset` | Destroy and recreate local PostgreSQL and Redis volumes |
+| `pnpm staff:bootstrap-owner -- owner@example.test` | Promote one existing account to the initial owner |
+
+For an API-only command, filter the package explicitly. For example:
+
+```bash
+pnpm --filter @better-commerce/api test --runInBand
+pnpm --filter @better-commerce/api test:watch
+```
+
+`pnpm format` and `pnpm lint:fix` modify files. The regular `lint` command does
+not.
+
+## Disposable development data
+
+The current pre-launch development workflow intentionally has no migration
+files. TypeORM synchronizes entities only in development and test. After an
+entity change, reset PostgreSQL and Redis and restart the API:
+
+```bash
+pnpm db:reset
+pnpm start:dev
+```
+
+`db:reset` permanently deletes both local Docker volumes, including development
+users, audit data, and every Redis session. It is forbidden in production.
+
+There is no general seed command yet. Development/test startup idempotently
+synchronizes the built-in authorization permission and role catalogue. Public
+registration creates a user; bootstrap the first owner separately after that
+account exists. Production remains blocked until reviewed migrations and a
+stable production seeding process are restored.
+
+The stateful end-to-end suites use a dedicated `better_commerce_test` database
+and isolated Redis prefixes. They do not reset the development volumes.
 
 ## Authentication behavior
 
@@ -70,7 +144,7 @@ authentication version and invalidate every existing session.
 Create the first owner only after that person has registered an ordinary account:
 
 ```bash
-npm run staff:bootstrap-owner -- owner@example.test
+pnpm staff:bootstrap-owner -- owner@example.test
 ```
 
 The command accepts exactly one existing email and never accepts or prints a
