@@ -1,0 +1,49 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["package.json", "pnpm-lock.yaml"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$"],
+      "outputs": ["dist/**"]
+    },
+    "typecheck": {
+      "dependsOn": ["^typecheck"],
+      "inputs": ["$TURBO_DEFAULT$"],
+      "outputs": []
+    },
+    "lint": {
+      "dependsOn": ["^lint"],
+      "inputs": ["$TURBO_DEFAULT$"],
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["^test"],
+      "inputs": ["$TURBO_DEFAULT$"],
+      "outputs": []
+    },
+    "test:e2e": {
+      "cache": false
+    },
+    "test:watch": {
+      "cache": false,
+      "persistent": true
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "start": {
+      "cache": false,
+      "persistent": true
+    },
+    "start:dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "start:debug": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}
