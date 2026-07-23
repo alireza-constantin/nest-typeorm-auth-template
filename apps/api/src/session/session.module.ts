@@ -42,7 +42,10 @@ import { SessionService } from './session.service';
         const options: SessionOptions = {
           name: configuration.cookieName,
           secret: configuration.secrets,
-          store,
+          // pnpm can resolve connect-redis's express-session peer through a
+          // different symlink path than this package's direct type import.
+          // Both paths target the same runtime Store contract.
+          store: store as unknown as NonNullable<SessionOptions['store']>,
           cookie: configuration.cookie,
           resave: false,
           saveUninitialized: false,

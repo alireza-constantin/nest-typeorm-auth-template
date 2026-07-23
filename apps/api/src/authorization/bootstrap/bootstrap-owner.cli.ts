@@ -4,7 +4,7 @@ import { OwnerBootstrapService } from './owner-bootstrap.service';
 
 /**
  * Invoke with one normalized-email argument, for example:
- * npx ts-node -r tsconfig-paths/register src/authorization/bootstrap/bootstrap-owner.cli.ts owner@example.com
+ * pnpm staff:bootstrap-owner -- owner@example.com
  */
 export async function runOwnerBootstrapCommand(
   args: readonly string[] = process.argv.slice(2),
