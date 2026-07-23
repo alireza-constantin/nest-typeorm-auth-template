@@ -34,6 +34,7 @@ and tests must preserve. A contract changes through explicit review and, where
 external consumers exist, a compatibility/versioning decision.
 
 - [Authorization contract](contracts/authorization.md)
+- [Catalog contract](contracts/catalog.md)
 
 ### Contributor handbook
 
@@ -59,6 +60,7 @@ completion. Mark completed plans clearly; do not treat them as architectural
 authority.
 
 - [Current continuation brief](plans/continuation.md)
+- [Proposed ADR-0005 Catalog implementation plan](plans/adr-0005-implementation.md)
 - [Completed ADR-0003 implementation plan](plans/adr-0003-implementation.md)
 
 ## Authority and conflicts
@@ -76,9 +78,8 @@ conflict through an amendment, superseding decision, or contract revision.
 
 ## Current decision sequence
 
-ADR-0001 through ADR-0004 are accepted. ADR-0005 — Catalog, Products, and
-Variants — is proposed and awaiting review. No Catalog implementation begins
-until it is accepted.
+ADR-0001 through ADR-0005 and the Catalog behavioral contract are accepted.
+The ADR-0005 implementation plan is proposed and awaiting review.
 
 ## Maintenance rules
 

@@ -1,7 +1,9 @@
 # ADR-0005 — Catalog, Products, and Variants
 
-Status: Proposed  
+Status: Accepted
 Date: 2026-07-23
+Accepted: 2026-07-23
+Frozen: 2026-07-23
 
 ## Context
 
