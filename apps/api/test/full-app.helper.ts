@@ -12,10 +12,10 @@ import {
   HttpLoggingMiddleware,
   ProblemDetailsFilter,
   RequestIdMiddleware,
-} from '../src/observability';
-import { configureApiRouting, configureOpenApi } from '../src/openapi';
-import { REDIS_CLIENT } from '../src/redis';
-import { CsrfProtectionMiddleware } from '../src/security';
+} from '../src/platform/observability';
+import { configureApiRouting, configureOpenApi } from '../src/platform/openapi';
+import { REDIS_CLIENT } from '../src/platform/redis';
+import { CsrfProtectionMiddleware } from '../src/platform/security';
 import {
   SESSION_ABSOLUTE_EXPIRY_MIDDLEWARE,
   SESSION_MIDDLEWARE,

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ObservabilityModule } from '../../observability';
+import { ObservabilityModule } from '../../platform/observability';
 import { AuthorizationDataModule } from '../data';
 import { OwnerBootstrapService } from './owner-bootstrap.service';
 

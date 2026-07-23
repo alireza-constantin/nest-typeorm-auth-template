@@ -14,7 +14,7 @@ import {
   StaffRoleAssignment,
 } from '../data';
 import { User, UserStatus } from '../../users/user.entity';
-import { SecurityEventLoggerService } from '../../observability';
+import { SecurityEventLoggerService } from '../../platform/observability';
 
 const OWNER_LOCK_SQL =
   "SELECT pg_advisory_xact_lock(hashtext('better-commerce:authorization-owner-role'))";

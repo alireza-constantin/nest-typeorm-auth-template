@@ -20,8 +20,11 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import type { Request } from 'express';
-import { ApiCsrfProtected, ApiSessionAuthenticated } from '../../openapi';
-import { RequestContextService } from '../../observability';
+import {
+  ApiCsrfProtected,
+  ApiSessionAuthenticated,
+} from '../../platform/openapi';
+import { RequestContextService } from '../../platform/observability';
 import { AdminApi, RequirePermissions } from '../enforcement';
 import { PermissionKey } from '../data';
 import {

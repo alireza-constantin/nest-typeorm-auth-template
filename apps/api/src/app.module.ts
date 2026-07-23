@@ -8,12 +8,12 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { SessionAuthGuard } from './auth/session-auth.guard';
 import { AdminAuthorizationGuard, AuthorizationModule } from './authorization';
-import { configuration, validateEnvironment } from './config';
-import { buildConfiguration } from './config/configuration';
-import { createDatabaseOptions } from './database/database-options';
-import { HealthModule } from './health/health.module';
-import { ObservabilityModule } from './observability';
-import { SecurityModule } from './security';
+import { configuration, validateEnvironment } from './platform/config';
+import { buildConfiguration } from './platform/config/configuration';
+import { createDatabaseOptions } from './platform/database/database-options';
+import { HealthModule } from './platform/health/health.module';
+import { ObservabilityModule } from './platform/observability';
+import { SecurityModule } from './platform/security';
 import { SessionModule } from './session';
 import { UsersModule } from './users/users.module';
 
@@ -31,7 +31,10 @@ import { UsersModule } from './users/users.module';
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: () => createDatabaseOptions(buildConfiguration(process.env)),
+      useFactory: () => ({
+        ...createDatabaseOptions(buildConfiguration(process.env)),
+        autoLoadEntities: true,
+      }),
     }),
     ObservabilityModule,
     AuthorizationModule,

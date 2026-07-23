@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ObservabilityModule } from '../../observability';
+import { ObservabilityModule } from '../../platform/observability';
 import { AuthorizationDataModule } from '../data';
 import { StaffAdminController } from './staff-admin.controller';
 import { StaffLifecycleService } from './staff-lifecycle.service';

@@ -11,7 +11,7 @@ import type { Request } from 'express';
 import { Repository } from 'typeorm';
 import { User, UserStatus } from '../users/user.entity';
 import { SessionService } from '../session';
-import { IS_PUBLIC_KEY } from './auth.constants';
+import { IS_PUBLIC_ROUTE } from '../platform/http/authentication';
 
 @Injectable()
 export class SessionAuthGuard implements CanActivate {
@@ -24,10 +24,10 @@ export class SessionAuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const isPublic = this.reflector.getAllAndOverride<boolean>(
+      IS_PUBLIC_ROUTE,
+      [context.getHandler(), context.getClass()],
+    );
     if (isPublic) return true;
 
     const request = context.switchToHttp().getRequest<Request>();

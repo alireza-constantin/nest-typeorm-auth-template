@@ -14,7 +14,7 @@ import type { Request } from 'express';
 import { DataSource, IsNull, Repository } from 'typeorm';
 import { EmailVerificationToken } from '../users/email-verification-token.entity';
 import { User } from '../users/user.entity';
-import { AbuseProtectionService, requestIpAddress } from '../security';
+import { AbuseProtectionService, requestIpAddress } from '../platform/security';
 import { EMAIL_VERIFICATION_DELIVERY } from './auth.constants';
 import type { EmailVerificationDelivery, SafeUserResponse } from './auth.types';
 import { normalizeEmail } from './auth.service';

@@ -8,7 +8,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ApiSessionAuthenticated } from '../../openapi';
+import { ApiSessionAuthenticated } from '../../platform/openapi';
 import { PermissionKey } from '../data';
 import { AdminApi, RequirePermissions } from '../enforcement';
 import {

@@ -11,8 +11,9 @@ The next Codex should read, in order:
 2. `docs/architecture/0001-platform-principles.md` — accepted platform philosophy;
 3. `docs/architecture/0002-monorepo.md` — accepted repository and workspace boundaries;
 4. `docs/architecture/0003-backend.md` — accepted and frozen backend module architecture;
-5. `docs/authorization-contract.md` — existing authorization behavior that must not regress;
-6. `docs/operations.md` and `README.md` — current development and verification workflows.
+5. `docs/adr-0003-implementation-plan.md` — sequential agent implementation contract;
+6. `docs/authorization-contract.md` — existing authorization behavior that must not regress;
+7. `docs/operations.md` and `README.md` — current development and verification workflows.
 
 Do not redesign ADR-0001, ADR-0002, or ADR-0003 during the next implementation
 wave. ADR-0003 is frozen; normative changes require its amendment process.
@@ -226,11 +227,34 @@ Docker Desktop's daemon was unavailable
 Stateful PostgreSQL/Redis end-to-end tests, live health/OpenAPI probes, and a
 real-user owner bootstrap still need one later run on a machine with Docker.
 
+### ADR-0003 Agent 1 — platform facilities and composition boundary
+
+Completed:
+
+- moved real configuration, database, Redis, health, observability, OpenAPI,
+  security, and public-route HTTP metadata into `apps/api/src/platform`;
+- made public-route metadata a platform transport concern consumed by the
+  session guard rather than an Auth-owned concept;
+- removed business-entity imports from platform database configuration;
+- enabled Nest TypeORM `autoLoadEntities` while retaining module-owned
+  `forFeature` registrations;
+- passed frozen installation, direct API build/type-check/lint/unit gates,
+  uncached root Turbo build/type-check/lint/unit gates, Compose validation, and
+  all environment-independent end-to-end tests.
+
+The Docker daemon remained unavailable, so stateful E2E, live health/OpenAPI,
+and live entity-registration checks remain part of the final verifier's work.
+
 ## Exact next objective
 
 ADR-0003 — Backend Module Architecture is accepted and frozen. Implement it as
 a behavior-preserving backend-boundary migration, separately from the completed
 repository relocation.
+
+Execute `docs/adr-0003-implementation-plan.md` sequentially. Agent 1's
+platform-facility and composition-boundary assignment is complete. The next
+assignment is Agent 2: Identity consolidation and its Module Public Contract.
+The lead Codex reviews each agent before starting the next one.
 
 The implementation wave should:
 
@@ -271,8 +295,9 @@ them.
 ## Suggested opening instruction on another machine
 
 > Continue Better Commerce from `docs/continuation-monorepo-migration.md`. Read
-> it and ADR-0001/ADR-0002/ADR-0003 completely, then inspect the actual Git
-> state. Preserve all existing changes. ADR-0002's pnpm/Turbo migration is
-> complete, and ADR-0003 is accepted and frozen. Plan and execute only the
-> behavior-preserving ADR-0003 backend-boundary migration. Do not build Admin,
-> storefront, SDK, storefront-core, registry, kernel, or new commerce modules.
+> it, `docs/adr-0003-implementation-plan.md`, and
+> ADR-0001/ADR-0002/ADR-0003 completely, then inspect the actual Git state.
+> Preserve all existing changes. ADR-0002's pnpm/Turbo migration is complete,
+> and ADR-0003 is accepted and frozen. Execute the sequential ADR-0003 plan,
+> beginning with Agent 1. Do not build Admin, storefront, SDK,
+> storefront-core, registry, kernel, or new commerce modules.

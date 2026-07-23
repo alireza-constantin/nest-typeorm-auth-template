@@ -1,7 +1,7 @@
 import { Controller, Get, HttpStatus, Res } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import type { Response } from 'express';
-import { Public } from '../auth/public.decorator';
+import { Public } from '../http/authentication';
 import { VERSION_NEUTRAL } from '../openapi';
 import { HealthService, type ReadinessResult } from './health.service';
 

@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import type { Request } from 'express';
-import { SecurityEventLoggerService } from '../../observability';
+import { SecurityEventLoggerService } from '../../platform/observability';
 import { PermissionKey, StaffProfileStatus } from '../data';
 import { AdminApi } from './admin-api.decorator';
 import { AdminAuthorizationGuard } from './admin-authorization.guard';

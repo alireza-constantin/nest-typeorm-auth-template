@@ -6,7 +6,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import type { Request } from 'express';
-import { Public } from '../auth/public.decorator';
+import { Public } from '../http/authentication';
 import { CsrfService } from './csrf.service';
 
 export class CsrfTokenResponse {

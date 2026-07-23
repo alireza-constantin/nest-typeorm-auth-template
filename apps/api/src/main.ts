@@ -10,9 +10,9 @@ import {
   ProblemDetailsFilter,
   RequestIdMiddleware,
   StructuredLoggerService,
-} from './observability';
-import { configureApiRouting, configureOpenApi } from './openapi';
-import { CsrfProtectionMiddleware } from './security';
+} from './platform/observability';
+import { configureApiRouting, configureOpenApi } from './platform/openapi';
+import { CsrfProtectionMiddleware } from './platform/security';
 import {
   SESSION_ABSOLUTE_EXPIRY_MIDDLEWARE,
   SESSION_MIDDLEWARE,

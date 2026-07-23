@@ -2,11 +2,11 @@ import { type INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import type { App } from 'supertest/types';
-import { HealthController } from '../src/health/health.controller';
+import { HealthController } from '../src/platform/health/health.controller';
 import {
   HealthService,
   type ReadinessResult,
-} from '../src/health/health.service';
+} from '../src/platform/health/health.service';
 
 describe('Health endpoints', () => {
   let app: INestApplication;

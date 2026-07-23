@@ -9,8 +9,6 @@ export const PASSWORD_HASH_OPTIONS = {
 
 export const SESSION_ABSOLUTE_LIFETIME_MS = 30 * 24 * 60 * 60 * 1000;
 
-export const IS_PUBLIC_KEY = 'auth:is-public';
-
 export const EMAIL_VERIFICATION_DELIVERY = Symbol(
   'EMAIL_VERIFICATION_DELIVERY',
 );

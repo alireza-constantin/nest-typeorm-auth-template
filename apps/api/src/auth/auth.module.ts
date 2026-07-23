@@ -5,7 +5,7 @@ import { User } from '../users/user.entity';
 import { PasswordCredential } from '../users/password-credential.entity';
 import { EmailVerificationToken } from '../users/email-verification-token.entity';
 import { SessionModule } from '../session';
-import { SecurityModule } from '../security';
+import { SecurityModule } from '../platform/security';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { EmailVerificationController } from './email-verification.controller';

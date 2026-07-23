@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
-import { buildConfiguration } from '../src/config/configuration';
+import { buildConfiguration } from '../src/platform/config/configuration';
 import { normalizeEmail } from '../src/auth/auth.service';
 import {
   buildSessionConfiguration,
