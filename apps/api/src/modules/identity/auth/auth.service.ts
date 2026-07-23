@@ -10,10 +10,13 @@ import { ConfigService } from '@nestjs/config';
 import type { Request } from 'express';
 import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User, UserStatus } from '../users/user.entity';
-import { PasswordCredential } from '../users/password-credential.entity';
+import { User, UserStatus } from '../persistence/user.entity';
+import { PasswordCredential } from '../persistence/password-credential.entity';
 import { SessionService } from '../session';
-import { AbuseProtectionService, requestIpAddress } from '../platform/security';
+import {
+  AbuseProtectionService,
+  requestIpAddress,
+} from '../../../platform/security';
 import { PasswordService } from './password.service';
 import type { SafeUserResponse } from './auth.types';
 import type { RegisterDto } from './dto/register.dto';

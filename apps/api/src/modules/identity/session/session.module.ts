@@ -3,7 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import session, { type SessionOptions } from 'express-session';
 import { RedisStore } from 'connect-redis';
 import type { RedisClientType } from 'redis';
-import { REDIS_CLIENT, RedisModule } from '../platform/redis';
+import { REDIS_CLIENT, RedisModule } from '../../../platform/redis';
 import { createAbsoluteSessionExpiryMiddleware } from './absolute-session-expiry.middleware';
 import {
   SESSION_ABSOLUTE_EXPIRY_MIDDLEWARE,

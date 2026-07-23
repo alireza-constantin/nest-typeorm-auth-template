@@ -16,7 +16,7 @@ import {
   StaffRoleAssignment,
   type SafeAuditMetadata,
 } from '../data';
-import { User, UserStatus } from '../../users/user.entity';
+import { User, UserStatus } from '../data/identity-user.persistence';
 
 export interface StaffActor {
   readonly userId: string;

@@ -9,9 +9,9 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { Request } from 'express';
 import { Repository } from 'typeorm';
-import { User, UserStatus } from '../users/user.entity';
+import { User, UserStatus } from '../persistence/user.entity';
 import { SessionService } from '../session';
-import { IS_PUBLIC_ROUTE } from '../platform/http/authentication';
+import { IS_PUBLIC_ROUTE } from '../../../platform/http/authentication';
 
 @Injectable()
 export class SessionAuthGuard implements CanActivate {

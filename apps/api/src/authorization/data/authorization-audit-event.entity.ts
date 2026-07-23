@@ -8,7 +8,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { User } from '../../users/user.entity';
+import { User } from './identity-user.persistence';
 import { AuditActionKey } from './audit-catalogue';
 import type { SafeAuditMetadata } from './audit-catalogue';
 

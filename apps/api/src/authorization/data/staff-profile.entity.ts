@@ -10,7 +10,7 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from '../../users/user.entity';
+import { User } from './identity-user.persistence';
 import { StaffRoleAssignment } from './staff-role-assignment.entity';
 
 export enum StaffProfileStatus {

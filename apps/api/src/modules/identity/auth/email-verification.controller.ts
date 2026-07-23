@@ -16,13 +16,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import type { Request } from 'express';
-import { AbuseProtectionInterceptor } from '../platform/security';
-import { Public } from '../platform/http/authentication';
+import { AbuseProtectionInterceptor } from '../../../platform/security';
+import { Public } from '../../../platform/http/authentication';
 import { EmailVerificationService } from './email-verification.service';
 import { RequestEmailVerificationDto } from './dto/request-email-verification.dto';
 import { ConfirmEmailVerificationDto } from './dto/confirm-email-verification.dto';
 import { SafeUserResponseDto } from './dto/safe-user-response.dto';
-import { ApiCsrfProtected } from '../platform/openapi';
+import { ApiCsrfProtected } from '../../../platform/openapi';
 
 @Public()
 @ApiTags('Email verification')

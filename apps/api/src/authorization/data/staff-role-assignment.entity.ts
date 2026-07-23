@@ -7,7 +7,7 @@ import {
   ManyToOne,
   PrimaryColumn,
 } from 'typeorm';
-import { User } from '../../users/user.entity';
+import { User } from './identity-user.persistence';
 import { Role } from './role.entity';
 import { StaffProfile } from './staff-profile.entity';
 

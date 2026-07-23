@@ -19,7 +19,7 @@ import { CsrfProtectionMiddleware } from '../src/platform/security';
 import {
   SESSION_ABSOLUTE_EXPIRY_MIDDLEWARE,
   SESSION_MIDDLEWARE,
-} from '../src/session';
+} from '../src/modules/identity/session';
 
 const TEST_DATABASE = 'better_commerce_test';
 const TEST_REDIS_PREFIXES = ['bc:e2e:sess:', 'bc:e2e:abuse:'];

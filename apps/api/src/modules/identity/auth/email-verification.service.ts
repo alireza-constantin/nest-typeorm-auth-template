@@ -12,9 +12,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { createHash, randomBytes } from 'node:crypto';
 import type { Request } from 'express';
 import { DataSource, IsNull, Repository } from 'typeorm';
-import { EmailVerificationToken } from '../users/email-verification-token.entity';
-import { User } from '../users/user.entity';
-import { AbuseProtectionService, requestIpAddress } from '../platform/security';
+import { EmailVerificationToken } from '../persistence/email-verification-token.entity';
+import { User } from '../persistence/user.entity';
+import {
+  AbuseProtectionService,
+  requestIpAddress,
+} from '../../../platform/security';
 import { EMAIL_VERIFICATION_DELIVERY } from './auth.constants';
 import type { EmailVerificationDelivery, SafeUserResponse } from './auth.types';
 import { normalizeEmail } from './auth.service';

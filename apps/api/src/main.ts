@@ -16,7 +16,7 @@ import { CsrfProtectionMiddleware } from './platform/security';
 import {
   SESSION_ABSOLUTE_EXPIRY_MIDDLEWARE,
   SESSION_MIDDLEWARE,
-} from './session';
+} from './modules/identity/session';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {

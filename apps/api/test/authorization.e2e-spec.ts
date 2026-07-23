@@ -11,7 +11,7 @@ import {
   StaffRoleAssignment,
 } from '../src/authorization/data';
 import { OwnerBootstrapService } from '../src/authorization/bootstrap';
-import { User } from '../src/users/user.entity';
+import { User } from '../src/modules/identity/persistence/user.entity';
 import {
   clearFullStackTestData,
   createFullApplication,

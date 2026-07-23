@@ -1,6 +1,6 @@
 import { ForbiddenException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { User, UserStatus } from '../../users/user.entity';
+import { User, UserStatus } from '../data/identity-user.persistence';
 import {
   PermissionKey,
   Role,

@@ -1,13 +1,13 @@
 import { ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 import { buildConfiguration } from '../src/platform/config/configuration';
-import { normalizeEmail } from '../src/auth/auth.service';
+import { normalizeEmail } from '../src/modules/identity/auth/auth.service';
 import {
   buildSessionConfiguration,
   DEFAULT_SESSION_ABSOLUTE_TTL_SECONDS,
   DEFAULT_SESSION_IDLE_TTL_SECONDS,
   remainingSessionTtlSeconds,
-} from '../src/session/session.config';
+} from '../src/modules/identity/session/session.config';
 
 const validEnvironment = () => ({
   NODE_ENV: 'test',

@@ -13,7 +13,7 @@ import {
   StaffProfileStatus,
   StaffRoleAssignment,
 } from '../data';
-import { User, UserStatus } from '../../users/user.entity';
+import { User, UserStatus } from '../data/identity-user.persistence';
 import { SecurityEventLoggerService } from '../../platform/observability';
 
 const OWNER_LOCK_SQL =

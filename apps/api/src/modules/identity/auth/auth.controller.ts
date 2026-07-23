@@ -21,20 +21,23 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
-import { AbuseProtectionInterceptor } from '../platform/security';
+import { AbuseProtectionInterceptor } from '../../../platform/security';
 import {
   clearCookieOptions,
   SESSION_CONFIGURATION,
   type SessionConfiguration,
 } from '../session';
 import { AuthService } from './auth.service';
-import { Public } from '../platform/http/authentication';
+import { Public } from '../../../platform/http/authentication';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import type { SafeUserResponse } from './auth.types';
 import { SafeUserResponseDto } from './dto/safe-user-response.dto';
-import { ApiCsrfProtected, ApiSessionAuthenticated } from '../platform/openapi';
+import {
+  ApiCsrfProtected,
+  ApiSessionAuthenticated,
+} from '../../../platform/openapi';
 
 @ApiTags('Authentication')
 @Controller('auth')

@@ -5,17 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { resolve } from 'node:path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { SessionAuthGuard } from './auth/session-auth.guard';
 import { AdminAuthorizationGuard, AuthorizationModule } from './authorization';
+import { IdentityModule, SessionAuthGuard } from './modules/identity';
 import { configuration, validateEnvironment } from './platform/config';
 import { buildConfiguration } from './platform/config/configuration';
 import { createDatabaseOptions } from './platform/database/database-options';
 import { HealthModule } from './platform/health/health.module';
 import { ObservabilityModule } from './platform/observability';
 import { SecurityModule } from './platform/security';
-import { SessionModule } from './session';
-import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -38,10 +35,8 @@ import { UsersModule } from './users/users.module';
     }),
     ObservabilityModule,
     AuthorizationModule,
-    SessionModule,
     SecurityModule,
-    UsersModule,
-    AuthModule,
+    IdentityModule,
     HealthModule,
   ],
   controllers: [AppController],

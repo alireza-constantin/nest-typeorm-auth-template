@@ -6,12 +6,12 @@ import {
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import type { App } from 'supertest/types';
-import { AuthController } from '../src/auth/auth.controller';
-import { AuthService } from '../src/auth/auth.service';
+import { AuthController } from '../src/modules/identity/auth/auth.controller';
+import { AuthService } from '../src/modules/identity/auth/auth.service';
 import {
   SESSION_CONFIGURATION,
   type SessionConfiguration,
-} from '../src/session';
+} from '../src/modules/identity/session';
 
 describe('Authentication HTTP contract', () => {
   let app: INestApplication;
