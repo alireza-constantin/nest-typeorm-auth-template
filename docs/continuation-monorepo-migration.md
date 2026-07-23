@@ -10,10 +10,12 @@ The next Codex should read, in order:
 1. `docs/continuation-monorepo-migration.md` — this handoff;
 2. `docs/architecture/0001-platform-principles.md` — accepted platform philosophy;
 3. `docs/architecture/0002-monorepo.md` — accepted repository and workspace boundaries;
-4. `docs/authorization-contract.md` — existing authorization behavior that must not regress;
-5. `docs/operations.md` and `README.md` — current development and verification workflows.
+4. `docs/architecture/0003-backend.md` — accepted and frozen backend module architecture;
+5. `docs/authorization-contract.md` — existing authorization behavior that must not regress;
+6. `docs/operations.md` and `README.md` — current development and verification workflows.
 
-Do not redesign ADR-0001 or ADR-0002 during the next implementation wave. Their immediate purpose is to guide a behavior-preserving repository migration.
+Do not redesign ADR-0001, ADR-0002, or ADR-0003 during the next implementation
+wave. ADR-0003 is frozen; normative changes require its amendment process.
 
 ## User intent
 
@@ -203,52 +205,74 @@ Agent 3 verification:
 The Docker Desktop Linux engine was unavailable on the work machine
 (`//./pipe/dockerDesktopLinuxEngine` did not exist). Agent 3 therefore could not
 start PostgreSQL/Redis, run the two stateful end-to-end suites, start the full
-API, exercise health probes, or bootstrap a real existing user. Agent 4 should
-run those checks where Docker is available.
+API, exercise health probes, or bootstrap a real existing user.
+
+### Agent 4 — independent migration verifier
+
+Completed:
+
+- independently audited pnpm, Turbo, API package, Nest, TypeScript, Jest,
+  environment, Compose, lockfile, and documentation boundaries;
+- passed frozen installation and uncached build, type-check, lint, and unit
+  gates;
+- passed all 16 unit suites and 54 tests;
+- passed three environment-independent end-to-end suites and all 14 tests;
+- confirmed no stale root source/test layout, recursive task orchestration,
+  extra lockfile, or generated artifact remained;
+- recommended accepting ADR-0002 and proceeding to ADR-0003.
+
+Docker Desktop's daemon was unavailable
+(`open //./pipe/docker_engine: The system cannot find the file specified`).
+Stateful PostgreSQL/Redis end-to-end tests, live health/OpenAPI probes, and a
+real-user owner bootstrap still need one later run on a machine with Docker.
 
 ## Exact next objective
 
-Run Agent 4 as an independent verifier for this migration wave.
+ADR-0003 — Backend Module Architecture is accepted and frozen. Implement it as
+a behavior-preserving backend-boundary migration, separately from the completed
+repository relocation.
 
-Agent 4 should:
+The implementation wave should:
 
-1. inspect package, workspace, Turbo, Nest, TypeScript, Jest, environment, and
-   Docker boundaries;
-2. run a frozen pnpm install and uncached build, type-check, lint, and unit
-   gates;
-3. validate Compose and run stateful end-to-end tests if Docker is available;
-4. check API startup, health, development/test OpenAPI, production OpenAPI
-   absence, and owner-bootstrap argument behavior;
-5. audit for an npm lockfile, application-level lockfiles, stale root source/test
-   assumptions, generated artifacts, and unrelated behavior changes;
-6. report evidence and make only narrowly assigned fixes.
+1. establish explicit business-module and platform-facility locations and
+   public entry points without creating empty future commerce modules;
+2. consolidate current `users`, `auth`, and session-policy ownership under
+   Identity while preserving every existing HTTP and session contract;
+3. preserve Authorization as a separate data authority and replace
+   business-level Identity repository/entity access with Identity's Module
+   Public Contract;
+4. confine necessary foreign-key metadata to persistence mapping and prohibit
+   cross-module ORM traversal and cascades;
+5. classify configuration, database, Redis, observability, health, OpenAPI, and
+   generic HTTP-security mechanisms as platform facilities;
+6. add lightweight static boundary checks and keep all current regression tests
+   green;
+7. run an independent final verification, including the previously skipped
+   Docker-backed checks when the engine is available.
 
-Do not redesign backend modules or begin commerce implementation during Agent
-4 verification.
+Do not create Catalog, Pricing, Inventory, Orders, CQRS, an event bus, an
+outbox, generic repository abstractions, or `apps/api/src/kernel` during this
+wave.
 
-## What follows verification
+## What follows ADR-0003 implementation
 
-After Agent 4 passes the monorepo migration:
+1. Review and accept ADR-0004 — Commerce Domain Model.
+2. Let ADR-0004 decide the concrete commerce capability map, including Catalog,
+   Pricing, Inventory, and Orders.
+3. Implement commerce capabilities incrementally under ADR-0003's boundaries.
+4. Keep detailed storefront source-distribution mechanics for ADR-0012.
 
-1. Review and accept ADR-0003 — Backend Architecture.
-2. ADR-0003 should define module structure, sole authority over persistent
-   state, public/private module contracts, transaction ownership, cross-module
-   calls, API-internal kernel admission criteria, and an enforceable dependency
-   matrix.
-3. Implement ADR-0003 separately from repository relocation.
-4. Continue with ADR-0004 — Commerce Domain Model.
-5. Keep detailed storefront source-distribution mechanics for ADR-0012.
-
-The API-internal kernel must not be created until ADR-0003 is accepted and a
-real shared primitive justifies it. Money and possibly a clock abstraction may
-eventually qualify; inventory, order snapshots, module errors, and event
-infrastructure do not automatically belong there.
+The API-internal kernel remains absent until a real primitive satisfies every
+ADR-0003 admission criterion. Money and possibly a clock abstraction may
+eventually qualify; inventory, order snapshots, generic events, generic errors,
+IDs, and helpers do not qualify merely because multiple files could import
+them.
 
 ## Suggested opening instruction on another machine
 
 > Continue Better Commerce from `docs/continuation-monorepo-migration.md`. Read
-> it and ADR-0001/ADR-0002 completely, then inspect the actual Git state.
-> Preserve all existing changes. The pnpm/Turbo migration and `apps/api`
-> relocation are implemented; run the independent Agent 4 verification only.
-> Do not redesign backend modules or build Admin, storefront, SDK,
-> storefront-core, registry, or commerce modules yet.
+> it and ADR-0001/ADR-0002/ADR-0003 completely, then inspect the actual Git
+> state. Preserve all existing changes. ADR-0002's pnpm/Turbo migration is
+> complete, and ADR-0003 is accepted and frozen. Plan and execute only the
+> behavior-preserving ADR-0003 backend-boundary migration. Do not build Admin,
+> storefront, SDK, storefront-core, registry, kernel, or new commerce modules.
