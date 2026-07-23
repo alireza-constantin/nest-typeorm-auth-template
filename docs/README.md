@@ -79,7 +79,8 @@ conflict through an amendment, superseding decision, or contract revision.
 ## Current decision sequence
 
 ADR-0001 through ADR-0005 and the Catalog behavioral contract are accepted.
-The ADR-0005 implementation plan is proposed and awaiting review.
+ADR-0005 Catalog implementation is complete. The next decision is ADR-0006 —
+Orders and historical purchase state.
 
 ## Maintenance rules
 

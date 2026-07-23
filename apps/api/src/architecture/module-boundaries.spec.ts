@@ -122,7 +122,8 @@ export function findBoundaryViolations(
 
     if (
       normalizedFile.endsWith('/modules/identity/index.ts') ||
-      normalizedFile.endsWith('/modules/authorization/index.ts')
+      normalizedFile.endsWith('/modules/authorization/index.ts') ||
+      normalizedFile.endsWith('/modules/catalog/index.ts')
     ) {
       if (/export\s+\*/.test(file.source)) {
         violations.push({

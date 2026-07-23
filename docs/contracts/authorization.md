@@ -145,6 +145,8 @@ Permission keys are constants and follow `<domain>.<resource>.<action>` where pr
 
 - `catalog.products.read`
 - `catalog.products.write`
+- `catalog.products.publish`
+- `catalog.products.archive`
 - `catalog.categories.read`
 - `catalog.categories.write`
 - `catalog.pricing.write`

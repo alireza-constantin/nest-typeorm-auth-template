@@ -13,6 +13,8 @@ export const PermissionKey = {
   AUDIT_READ: 'audit.read',
   CATALOG_PRODUCTS_READ: 'catalog.products.read',
   CATALOG_PRODUCTS_WRITE: 'catalog.products.write',
+  CATALOG_PRODUCTS_PUBLISH: 'catalog.products.publish',
+  CATALOG_PRODUCTS_ARCHIVE: 'catalog.products.archive',
   CATALOG_CATEGORIES_READ: 'catalog.categories.read',
   CATALOG_CATEGORIES_WRITE: 'catalog.categories.write',
   CATALOG_PRICING_WRITE: 'catalog.pricing.write',
@@ -74,6 +76,14 @@ export const PERMISSION_CATALOGUE: readonly PermissionDefinition[] =
       description: 'Create or update catalog products.',
     },
     {
+      key: PermissionKey.CATALOG_PRODUCTS_PUBLISH,
+      description: 'Publish or unpublish catalog products.',
+    },
+    {
+      key: PermissionKey.CATALOG_PRODUCTS_ARCHIVE,
+      description: 'Archive or restore catalog products and variants.',
+    },
+    {
       key: PermissionKey.CATALOG_CATEGORIES_READ,
       description: 'View catalog categories.',
     },
@@ -127,6 +137,8 @@ export interface BuiltInRoleDefinition {
 const catalogPermissions = [
   PermissionKey.CATALOG_PRODUCTS_READ,
   PermissionKey.CATALOG_PRODUCTS_WRITE,
+  PermissionKey.CATALOG_PRODUCTS_PUBLISH,
+  PermissionKey.CATALOG_PRODUCTS_ARCHIVE,
   PermissionKey.CATALOG_CATEGORIES_READ,
   PermissionKey.CATALOG_CATEGORIES_WRITE,
   PermissionKey.CATALOG_PRICING_WRITE,

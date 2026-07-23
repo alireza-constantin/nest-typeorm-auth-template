@@ -33,6 +33,14 @@ apps/api/src/
       authorization.module.ts
       index.ts                  Module Public Contract
 
+    catalog/
+      application/              Product commands, projections, and contract
+      domain/                   Catalog lifecycle and normalization rules
+      http/                     Administrative and public Catalog transport
+      persistence/              Catalog-owned TypeORM mappings and operations
+      catalog.module.ts
+      index.ts                  Narrow Variant-facts Module Public Contract
+
   platform/
     config/                     Environment parsing and validation
     database/                   TypeORM configuration and opaque transactions
@@ -47,8 +55,8 @@ apps/api/src/
     module-boundaries.spec.ts   Automated ADR-0003 dependency checks
 ```
 
-Catalog, Pricing, Inventory, and Orders are accepted future capabilities in
-ADR-0004 but are not implemented yet.
+Catalog is implemented for Products and Variants only. Pricing, Inventory, and
+Orders remain accepted future capabilities in ADR-0004 and are not implemented.
 
 ## Dependency direction
 
@@ -57,18 +65,22 @@ flowchart TD
     Composition["app.module.ts — composition root"]
     Identity["Identity module"]
     Authorization["Authorization module"]
+    Catalog["Catalog module"]
     Platform["Platform facilities"]
     IdentityContract["Identity Module Public Contract"]
     AuthorizationContract["Authorization Module Public Contract"]
+    CatalogContract["Catalog Module Public Contract"]
 
     Composition --> Identity
     Composition --> Authorization
+    Composition --> Catalog
     Composition --> Platform
     Authorization --> IdentityContract
     Identity --> Platform
     Authorization --> Platform
     Identity --> IdentityContract
     Authorization --> AuthorizationContract
+    Catalog --> CatalogContract
 ```
 
 The composition root may know all concrete modules. Platform facilities do not

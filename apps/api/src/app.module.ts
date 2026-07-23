@@ -9,6 +9,7 @@ import {
   AdminAuthorizationGuard,
   AuthorizationModule,
 } from './modules/authorization';
+import { CatalogModule } from './modules/catalog';
 import { IdentityModule, SessionAuthGuard } from './modules/identity';
 import { configuration, validateEnvironment } from './platform/config';
 import { buildConfiguration } from './platform/config/configuration';
@@ -40,6 +41,7 @@ import { SecurityModule } from './platform/security';
     DatabaseModule,
     ObservabilityModule,
     AuthorizationModule,
+    CatalogModule,
     SecurityModule,
     IdentityModule,
     HealthModule,

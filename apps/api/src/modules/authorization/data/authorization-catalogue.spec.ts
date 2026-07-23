@@ -10,7 +10,7 @@ describe('authorization catalogue', () => {
     const keys = PERMISSION_CATALOGUE.map(({ key }) => key);
 
     expect(new Set(keys).size).toBe(keys.length);
-    expect(keys).toHaveLength(25);
+    expect(keys).toHaveLength(27);
   });
 
   it('contains unique built-in roles with explicit, known permissions', () => {
@@ -46,5 +46,21 @@ describe('authorization catalogue', () => {
     expect(administrator?.permissionKeys).not.toContain(
       PermissionKey.STAFF_ASSIGN_OWNER,
     );
+  });
+
+  it('grants the Catalog lifecycle permissions only to approved roles', () => {
+    const granted = BUILT_IN_ROLE_CATALOGUE.filter((role) =>
+      role.permissionKeys.includes(PermissionKey.CATALOG_PRODUCTS_PUBLISH),
+    ).map((role) => role.key);
+    const archived = BUILT_IN_ROLE_CATALOGUE.filter((role) =>
+      role.permissionKeys.includes(PermissionKey.CATALOG_PRODUCTS_ARCHIVE),
+    ).map((role) => role.key);
+
+    expect(granted).toEqual([
+      RoleKey.OWNER,
+      RoleKey.ADMINISTRATOR,
+      RoleKey.CATALOG_MANAGER,
+    ]);
+    expect(archived).toEqual(granted);
   });
 });

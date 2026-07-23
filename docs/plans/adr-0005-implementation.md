@@ -1,7 +1,10 @@
 # ADR-0005 Catalog Implementation Plan
 
-Status: Proposed
+Status: Completed
 Date: 2026-07-23
+Approved: 2026-07-23
+Implementation started: 2026-07-23
+Completed: 2026-07-23
 Authority:
 
 - `docs/adr/0003-backend.md`
@@ -389,3 +392,10 @@ Only after this evidence may the plan be marked Completed. Completion of
 Catalog does not imply ADR-0004 as a whole is implemented; Orders, Pricing, and
 Inventory remain separate future decisions and implementation waves.
 
+## 11. Completion record
+
+Agents 1 through 4 completed the approved Catalog slice. The independent audit
+confirmed the contract evidence, corrected executable-content validation and
+OpenAPI DTO documentation defects, and found no remaining production blocker.
+Catalog is complete as an ADR-0005 capability; ADR-0004 remains only partially
+implemented because Orders, Pricing, and Inventory have not begun.
