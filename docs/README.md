@@ -17,6 +17,7 @@ amendment or a superseding ADR.
 - [ADR-0002 — Repository and Workspace Boundaries](adr/0002-monorepo.md)
 - [ADR-0003 — Backend Module Architecture](adr/0003-backend.md)
 - [ADR-0004 — Commerce Domain Model](adr/0004-commerce-model.md)
+- [ADR-0005 — Catalog, Products, and Variants](adr/0005-catalog.md)
 
 ### Living architecture
 
@@ -75,9 +76,9 @@ conflict through an amendment, superseding decision, or contract revision.
 
 ## Current decision sequence
 
-ADR-0001 through ADR-0004 are accepted. The next decision is ADR-0005 —
-Catalog, Products, and Variants. No Catalog implementation begins until that
-focused ADR is reviewed and accepted.
+ADR-0001 through ADR-0004 are accepted. ADR-0005 — Catalog, Products, and
+Variants — is proposed and awaiting review. No Catalog implementation begins
+until it is accepted.
 
 ## Maintenance rules
 
